@@ -120,7 +120,64 @@
 (new_sqrt 0.0001 0.0 0.1)  ; correct
 (newton_sqrt 0.0001 1)  ; wrong
 (new_sqrt 1e50 0.0 1.0)
-(newton_sqrt 1e50 1.0)  ; hard to converge
+;(newton_sqrt 1e50 1.0)  ; hard to converge
 ;(new_goodenough? 2 2.01)
 
 (define ex_1.8 "ex. 1.8--") ex_1.8
+(define (improve_guess_cuberoot guess x)
+  (/ (+ (/ x (square guess)) (* 2 guess)) 3))
+(define (cuberoot x guess new_guess)
+  (if (new_goodenough? guess new_guess)
+      new_guess
+      (cuberoot x new_guess (improve_guess_cuberoot new_guess x))))
+
+(cuberoot 8  1 1.5)
+(cuberoot 125  1 1.5)
+(cuberoot 125000  1 1.5)
+
+; scopes
+(define (scope_sqrt x)
+  (define (sqrt_iter guess)
+    (if (goodenough? guess)
+        guess
+        (sqrt_iter (improve_guess guess))))
+  (define (goodenough? guess)
+    (< (abs (- x (square guess))) 0.001))
+  (define (improve_guess guess)
+    (/ (+ guess (/ x guess)) 2.0))
+  (sqrt_iter 1.0)
+  )
+(scope_sqrt 4.0)
+
+(define ex_1.9 "ex. 1.9--") ex_1.9
+;(define (+ a b) (if (= a 0) b (inc (+ (dec a) b)))) -->(1)
+;(define (+ a b) (if (= a 0) b (+ (dec a) (inc b)))) -->(2)
+;(+ 4 5)
+;(1)
+;(inc (+ 3 5))
+;(inc (inc (+ 2 5)))
+;(inc (inc (inc (+ 1 5))))
+;(inc (inc (inc (inc (+ 0 5)))))
+;(inc (inc (inc (inc 5))))
+;(inc (inc (inc 6)))
+;(inc (inc 7))
+;(inc 8)
+;9
+;(2)
+;(+ 3 6)
+;(+ 2 7)
+;(+ 1 8)
+;(+ 0 9)
+;9
+(define (A x y)
+  (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+        (else (A (- x 1)
+                 (A x (- y 1))))))
+(A 1 10)
+(A 2 4)
+(A 3 3)
+
+(define ex_1.10 "ex. 1.10--") ex_1.10
+
